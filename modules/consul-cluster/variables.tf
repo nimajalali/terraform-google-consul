@@ -115,6 +115,7 @@ variable "service_account_email" {
 }
 
 variable "instance_group_update_policy" {
+  default = null
   type = object({
     type                    = string
     minimal_action          = string

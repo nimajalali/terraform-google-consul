@@ -23,7 +23,19 @@ resource "google_compute_region_instance_group_manager" "consul_server" {
   }
   region = var.gcp_region
 
-  update_policy = var.update_policy
+  dynamic "update_policy" {
+    for_each = var.instance_group_update_policy == null ? [] : list(var.instance_group_update_policy)
+
+    content {
+      type                    = update_policy.value.type
+      minimal_action          = update_policy.value.minimal_action
+      max_surge_fixed         = update_policy.value.max_surge_fixed
+      max_surge_percent       = update_policy.value.max_surge_percent
+      max_unavailable_fixed   = update_policy.value.max_unavailable_fixed
+      max_unavailable_percent = update_policy.value.max_unavailable_percent
+      min_ready_sec           = update_policy.value.min_ready_sec
+    }
+  }
 
   target_pools = var.instance_group_target_pools
   target_size  = var.cluster_size
